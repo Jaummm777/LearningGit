@@ -21,8 +21,8 @@ try:
     time.sleep(2)
 
     # Login
-    driver.find_element(By.XPATH, "//*[@id=\"kc-content-wrapper\"]/react-login/div/div/div[1]/div[1]/div[1]/form/div[1]/div/input").send_keys("agregarnegocios@gmail.com")
-    driver.find_element(By.XPATH, "//*[@id=\"kc-content-wrapper\"]/react-login/div/div/div[1]/div[1]/div[1]/form/div[2]/div/input").send_keys("Transformar.vidas07")
+    driver.find_element(By.XPATH, "//*[@id=\"kc-content-wrapper\"]/react-login/div/div/div[1]/div[1]/div[1]/form/div[1]/div/input").send_keys("private")
+    driver.find_element(By.XPATH, "//*[@id=\"kc-content-wrapper\"]/react-login/div/div/div[1]/div[1]/div[1]/form/div[2]/div/input").send_keys("private")
     driver.find_element(By.XPATH, "//*[@id=\"kc-content-wrapper\"]/react-login/div/div/div[1]/div[1]/div[1]/form/div[3]/button").click()
     time.sleep(5)
 

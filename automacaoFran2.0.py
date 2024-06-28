@@ -114,8 +114,8 @@ def filtrar_data(navegador):
         print(f"Erro ao filtrar a data: {e}")
 
 # Credenciais de login
-usuario = "agregarnegocios@gmail.com"
-senha = "Transformar.vidas07"
+usuario = "private"
+senha = "private"
 
 # Realizar login
 realizar_login(navegador, usuario, senha)
