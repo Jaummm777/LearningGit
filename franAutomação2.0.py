@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import os
 import time
 import shutil
+import glob
 
 # Configurações do navegador
 options = webdriver.ChromeOptions()
@@ -74,22 +75,36 @@ try:
 
     # Exportar a planilha
     driver.find_element(By.XPATH, "//*[@id=\"bs-modal\"]/div/div/div/div[3]/button[1]").click()
-    time.sleep(60)  # Aguardar o download do arquivo
+    time.sleep(10)  # Aguardar o início do download
 
     # Caminhos dos arquivos
     pasta_downloads = "C:\\Users\\AGREGAR\\Downloads"
-    nome_arquivo_baixado = "nome_do_arquivo_baixado.xlsx"  # Substitua pelo nome real do arquivo baixado
-    caminho_arquivo_baixado = os.path.join(pasta_downloads, nome_arquivo_baixado)
     pasta_cliente = "G:\\Drives compartilhados\\Agregar Negócios - Drive Geral\\Agregar Clientes Ativos\\FRAN MAKES\\3. Finanças\\3 - Relatórios Financeiros\\BASE DE DADOS - TINY\\TESTE AUTOMAÇÃO"
-    caminho_arquivo_cliente = os.path.join(pasta_cliente, nome_arquivo_baixado)
 
-    # Mover e substituir o arquivo
-    if os.path.exists(caminho_arquivo_baixado):
-        if os.path.exists(caminho_arquivo_cliente):
-            os.remove(caminho_arquivo_cliente)  # Remover o arquivo antigo
-        shutil.move(caminho_arquivo_baixado, caminho_arquivo_cliente)  # Mover o novo arquivo
+    # Loop para verificar se o arquivo foi baixado
+    arquivo_baixado = None
+    for _ in range(60):  # Tentar por 60 segundos
+        lista_arquivos = glob.glob(os.path.join(pasta_downloads, "*.xlsx"))
+        if lista_arquivos:
+            arquivo_baixado = max(lista_arquivos, key=os.path.getctime)
+            if "caixa_" in os.path.basename(arquivo_baixado):
+                break
+        time.sleep(1)  # Esperar 1 segundo antes de tentar novamente
+
+    if arquivo_baixado and "caixa_" in os.path.basename(arquivo_baixado):
+        # Caminho do arquivo de destino
+        caminho_arquivo_cliente = os.path.join(pasta_cliente, os.path.basename(arquivo_baixado))
+
+        # Mover e substituir o arquivo
+        if os.path.exists(arquivo_baixado):
+            if os.path.exists(caminho_arquivo_cliente):
+                os.remove(caminho_arquivo_cliente)  # Remover o arquivo antigo
+            shutil.move(arquivo_baixado, caminho_arquivo_cliente)  # Mover o novo arquivo
+            print(f"Arquivo movido para {caminho_arquivo_cliente}")
+        else:
+            print(f"Arquivo {arquivo_baixado} não encontrado na pasta de downloads.")
     else:
-        print(f"Arquivo {nome_arquivo_baixado} não encontrado na pasta de downloads.")
+        print("Nenhum arquivo foi baixado.")
 
 except Exception as e:
     print(f"Ocorreu um erro: {e}")
