@@ -1,4 +1,4 @@
-#Bibliotecas
+# Bibliotecas
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -16,13 +16,13 @@ options.add_experimental_option("prefs", prefs)
 driver = webdriver.Chrome(options=options)
 
 try:
-# Acessar Tiny ERP
+    # Acessar Tiny ERP
     driver.get("https://erp.tiny.com.br/")
     time.sleep(2)
 
     # Login
-    driver.find_element(By.XPATH, "//*[@id=\"kc-content-wrapper\"]/react-login/div/div/div[1]/div[1]/div[1]/form/div[1]/div/input").send_keys("private")
-    driver.find_element(By.XPATH, "//*[@id=\"kc-content-wrapper\"]/react-login/div/div/div[1]/div[1]/div[1]/form/div[2]/div/input").send_keys("private")
+    driver.find_element(By.XPATH, "//*[@id=\"kc-content-wrapper\"]/react-login/div/div/div[1]/div[1]/div[1]/form/div[1]/div/input").send_keys("agregarnegocios@gmail.com")
+    driver.find_element(By.XPATH, "//*[@id=\"kc-content-wrapper\"]/react-login/div/div/div[1]/div[1]/div[1]/form/div[2]/div/input").send_keys("Transformar.vidas07")
     driver.find_element(By.XPATH, "//*[@id=\"kc-content-wrapper\"]/react-login/div/div/div[1]/div[1]/div[1]/form/div[3]/button").click()
     time.sleep(5)
 
@@ -74,15 +74,22 @@ try:
 
     # Exportar a planilha
     driver.find_element(By.XPATH, "//*[@id=\"bs-modal\"]/div/div/div/div[3]/button[1]").click()
-    time.sleep(60)
+    time.sleep(60)  # Aguardar o download do arquivo
 
-    # caminho para salvar os arquivos
+    # Caminhos dos arquivos
+    pasta_downloads = "C:\\Users\\AGREGAR\\Downloads"
+    nome_arquivo_baixado = "nome_do_arquivo_baixado.xlsx"  # Substitua pelo nome real do arquivo baixado
+    caminho_arquivo_baixado = os.path.join(pasta_downloads, nome_arquivo_baixado)
+    pasta_cliente = "G:\\Drives compartilhados\\Agregar Negócios - Drive Geral\\Agregar Clientes Ativos\\FRAN MAKES\\3. Finanças\\3 - Relatórios Financeiros\\BASE DE DADOS - TINY\\TESTE AUTOMAÇÃO"
+    caminho_arquivo_cliente = os.path.join(pasta_cliente, nome_arquivo_baixado)
 
-    pasta_para_salvar = "c:\\Users\\AGREGAR\\Downloads"
-    nome_do_arquivo = "teste.xlsx"
-    pasta_cliente = "G:\\Drives compartilhados\\Agregar Negócios - Drive Geral\\Agregar Clientes Ativos\\FRAN MAKES\\3. Finanças\\3 - Relatórios Financeiros\\BASE DE DADOS - TINY\\TESTE AUTOMAÇÂO"
-    caminho_arquivo_baixado = os.path.join(pasta_cliente, nome_do_arquivo)
-    caminho_arquivo_cliente = os.path.join(pasta_cliente, nome_do_arquivo)
+    # Mover e substituir o arquivo
+    if os.path.exists(caminho_arquivo_baixado):
+        if os.path.exists(caminho_arquivo_cliente):
+            os.remove(caminho_arquivo_cliente)  # Remover o arquivo antigo
+        shutil.move(caminho_arquivo_baixado, caminho_arquivo_cliente)  # Mover o novo arquivo
+    else:
+        print(f"Arquivo {nome_arquivo_baixado} não encontrado na pasta de downloads.")
 
 except Exception as e:
     print(f"Ocorreu um erro: {e}")
