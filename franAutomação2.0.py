@@ -2,11 +2,17 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import os
 import time
+import shutil
 
 # Configurações do navegador
 options = webdriver.ChromeOptions()
 options.add_argument("--start-maximized")  # Iniciar navegador maximizado
+prefs = {"download.default_directory": "C:\\Users\\AGREGAR\\Downloads"}
+options.add_experimental_option("prefs", prefs)
 driver = webdriver.Chrome(options=options)
 
 try:
@@ -69,6 +75,14 @@ try:
     # Exportar a planilha
     driver.find_element(By.XPATH, "//*[@id=\"bs-modal\"]/div/div/div/div[3]/button[1]").click()
     time.sleep(60)
+
+    # caminho para salvar os arquivos
+
+    pasta_para_salvar = "c:\\Users\\AGREGAR\\Downloads"
+    nome_do_arquivo = "teste.xlsx"
+    pasta_cliente = "G:\\Drives compartilhados\\Agregar Negócios - Drive Geral\\Agregar Clientes Ativos\\FRAN MAKES\\3. Finanças\\3 - Relatórios Financeiros\\BASE DE DADOS - TINY\\TESTE AUTOMAÇÂO"
+    caminho_arquivo_baixado = os.path.join(pasta_cliente, nome_do_arquivo)
+    caminho_arquivo_cliente = os.path.join(pasta_cliente, nome_do_arquivo)
 
 except Exception as e:
     print(f"Ocorreu um erro: {e}")
