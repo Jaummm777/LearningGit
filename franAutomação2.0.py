@@ -2,8 +2,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import os
 import time
 import shutil
@@ -79,30 +77,37 @@ try:
 
     # Caminhos dos arquivos
     pasta_downloads = "C:\\Users\\AGREGAR\\Downloads"
-    pasta_cliente = "G:\\Drives compartilhados\\Agregar Negócios - Drive Geral\\Agregar Clientes Ativos\\FRAN MAKES\\3. Finanças\\3 - Relatórios Financeiros\\BASE DE DADOS - TINY\\TESTE AUTOMAÇÃO"
+    pasta_cliente = "G:\\Drives compartilhados\\Agregar Negócios - Drive Geral\\Agregar Clientes Ativos\\FRAN MAKES\\3. Finanças\\3 - Relatórios Financeiros\\BASE DE DADOS - TINY\\CAIXA"
 
-    # Loop para verificar se o arquivo foi baixado
+    # Verificar se o arquivo foi baixado
+    tempo_espera = 60  # Tempo máximo de espera em segundos
+    tempo_inicial = time.time()
     arquivo_baixado = None
-    for _ in range(60):  # Tentar por 60 segundos
-        lista_arquivos = glob.glob(os.path.join(pasta_downloads, "*.xlsx"))
-        if lista_arquivos:
-            arquivo_baixado = max(lista_arquivos, key=os.path.getctime)
-            if "caixa_" in os.path.basename(arquivo_baixado):
-                break
+
+    while (time.time() - tempo_inicial) < tempo_espera:
+        arquivos = glob.glob(os.path.join(pasta_downloads, "*.xls"))
+        if arquivos:
+            arquivo_baixado = max(arquivos, key=os.path.getctime)
+            break
         time.sleep(1)  # Esperar 1 segundo antes de tentar novamente
 
-    if arquivo_baixado and "caixa_" in os.path.basename(arquivo_baixado):
+    if arquivo_baixado:
+        # Obter a extensão do arquivo baixado
+        extensao = os.path.splitext(arquivo_baixado)[1]
+        novo_nome = f"caixa fran{extensao}"
+        novo_caminho = os.path.join(pasta_downloads, novo_nome)
+
+        # Renomear o arquivo
+        os.rename(arquivo_baixado, novo_caminho)
+
         # Caminho do arquivo de destino
-        caminho_arquivo_cliente = os.path.join(pasta_cliente, os.path.basename(arquivo_baixado))
+        caminho_arquivo_cliente = os.path.join(pasta_cliente, novo_nome)
 
         # Mover e substituir o arquivo
-        if os.path.exists(arquivo_baixado):
-            if os.path.exists(caminho_arquivo_cliente):
-                os.remove(caminho_arquivo_cliente)  # Remover o arquivo antigo
-            shutil.move(arquivo_baixado, caminho_arquivo_cliente)  # Mover o novo arquivo
-            print(f"Arquivo movido para {caminho_arquivo_cliente}")
-        else:
-            print(f"Arquivo {arquivo_baixado} não encontrado na pasta de downloads.")
+        if not os.path.exists(pasta_cliente):
+            os.makedirs(pasta_cliente)  # Criar a pasta se não existir
+        shutil.move(novo_caminho, caminho_arquivo_cliente)  # Mover o novo arquivo, substituindo se necessário
+        print(f"Arquivo movido para {caminho_arquivo_cliente}")
     else:
         print("Nenhum arquivo foi baixado.")
 
