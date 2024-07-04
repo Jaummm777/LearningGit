@@ -84,7 +84,7 @@ driver = webdriver.Chrome(options=options)
 
 try:
     # Login na primeira conta
-    login_tiny(driver, "agregarnegocios@gmail.com", "Transformar.vidas07")
+    login_tiny(driver, "**********", "*************")
 
     # Verificar se há um aviso de usuário já logado e clicar no botão para confirmar o logout do outro usuário
     try:
@@ -347,7 +347,7 @@ try:
     logout_tiny(driver)
 
     # Login na segunda conta
-    login_tiny(driver, "LAVRATTIASSESSORIA@GMAIL.COM", "Transformar.vidas07")
+    login_tiny(driver, "**********", "**********")
 
     # Verificar se há um aviso de usuário já logado e clicar no botão para confirmar o logout do outro usuário
     try:
