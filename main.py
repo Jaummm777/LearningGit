@@ -1,9 +1,8 @@
-# Bibliotecas
+# main.py
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import os
 import time
 import shutil
@@ -12,6 +11,7 @@ import pandas as pd
 import pyxlsb
 import win32com.client as win32
 from openpyxl import load_workbook
+from tiny_login import login_tiny, logout_tiny  # Importar as funções de login/logout
 
 # Função para verificar e converter o arquivo XLS para XLSX usando pyxlsb
 def verificar_e_converter_xls(caminho_arquivo, novo_caminho):
@@ -57,24 +57,6 @@ def renomear_planilha(caminho_arquivo, novo_nome_planilha):
     except Exception as e:
         print(f"Erro ao renomear a planilha: {e}")
 
-# Função para fazer login no Tiny ERP
-def login_tiny(driver, email, senha):
-    driver.get("https://erp.tiny.com.br/")
-    time.sleep(2)
-    driver.find_element(By.XPATH, "//*[@id='kc-content-wrapper']/react-login/div/div/div[1]/div[1]/div[1]/form/div[1]/div/input").send_keys(email)
-    driver.find_element(By.XPATH, "//*[@id='kc-content-wrapper']/react-login/div/div/div[1]/div[1]/div[1]/form/div[2]/div/input").send_keys(senha)
-    driver.find_element(By.XPATH, "//*[@id='kc-content-wrapper']/react-login/div/div/div[1]/div[1]/div[1]/form/div[3]/button").click()
-    time.sleep(5)
-
-# Função para fazer logout no Tiny ERP
-def logout_tiny(driver):
-    driver.find_element(By.XPATH, "//*[@id=\"main-menu\"]/div[2]/div[1]/div[1]/div[1]").click()
-    time.sleep(2)
-    driver.find_element(By.XPATH, "//*[@id=\"main-menu\"]/div[2]/div[1]/div[1]/div[2]/ul/li[4]/a/div/div[2]/img").click()
-    time.sleep(2)
-    driver.find_element(By.XPATH, "//*[@id=\"main-menu\"]/div[2]/div[2]/nav[7]/div[3]/a")
-    time.sleep(5)
-
 # Configurações do navegador
 options = webdriver.ChromeOptions()
 options.add_argument("--start-maximized")
@@ -85,15 +67,6 @@ driver = webdriver.Chrome(options=options)
 try:
     # Login na primeira conta
     login_tiny(driver, "agregarnegocios@gmail.com", "Transformar.vidas07")
-
-    # Verificar se há um aviso de usuário já logado e clicar no botão para confirmar o logout do outro usuário
-    try:
-        login_button = driver.find_element(By.XPATH, "//*[@id='bs-modal-ui-popup']/div/div/div/div[3]/button[1]")
-        if login_button.is_displayed():
-            login_button.click()
-            time.sleep(5)
-    except:
-        pass
 
     # Expandir menu principal
     driver.find_element(By.XPATH, "//*[@id='main-menu']/div[2]/div[1]/div[1]/div[1]").click() 
@@ -329,7 +302,7 @@ try:
             novo_nome = f"estoque_multi_empresa fran e fpml.xlsx"
             novo_caminho = os.path.join(pasta_downloads, novo_nome)
 
-            # Renomear o arquivo
+                        # Renomear o arquivo
             if os.path.exists(novo_caminho):
                 os.remove(novo_caminho)  # Excluir o arquivo existente
             os.rename(caminho_arquivo_xlsx, novo_caminho)
@@ -345,18 +318,22 @@ try:
 
     # Logout da primeira conta
     logout_tiny(driver)
+    time.sleep(15)
+
+    # Verificar se a mensagem de sessão expirada aparece e abrir uma nova aba para login na conta secundária
+    try:
+        alert_message = driver.find_element(By.XPATH, "//*[contains(text(), 'Atenção! Sua sessão expirou ou este usuário efetuou login em outra máquina.')]")
+        if alert_message.is_displayed():
+            # Abrir uma nova aba e fazer login na conta secundária
+            driver.execute_script("window.open('');")
+            driver.switch_to.window(driver.window_handles[1])
+            login_tiny(driver, "LAVRATTIASSESSORIA@GMAIL.COM", "Transformar.vidas07")
+    except:
+        pass
 
     # Login na segunda conta
     login_tiny(driver, "LAVRATTIASSESSORIA@GMAIL.COM", "Transformar.vidas07")
-
-    # Verificar se há um aviso de usuário já logado e clicar no botão para confirmar o logout do outro usuário
-    try:
-        login_button = driver.find_element(By.XPATH, "//*[@id='bs-modal-ui-popup']/div/div/div/div[3]/button[1]")
-        if login_button.is_displayed():
-            login_button.click()
-            time.sleep(5)
-    except:
-        pass
+    time.sleep(5)
 
     # Expandir menu principal
     driver.find_element(By.XPATH, "//*[@id='main-menu']/div[2]/div[1]/div[1]/div[1]").click() 
@@ -390,11 +367,11 @@ try:
     time.sleep(2)
 
     # Clicar nas contas
-    driver.find_element(By.XPATH, "//*[@id='page-wrapper']/div[4]/div[2]/div[1]/ul/li/a/span").click()
+    driver.find_element(By.XPATH, "//*[@id=\"page-wrapper\"]/div[4]/div[2]/div[2]/ul/li/a").click()
     time.sleep(2)
 
     # Remover Filtro de Conta Bancária
-    driver.find_element(By.XPATH, "//*[@id='item-conta-todas']").click()
+    driver.find_element(By.XPATH, "//*[@id=\"item-conta-todas\"]").click()
     time.sleep(7)
 
     # Clicar em mais ações
@@ -411,7 +388,7 @@ try:
 
     # Caminhos dos arquivos
     pasta_downloads = "C:\\Users\\AGREGAR\\Downloads"
-    pasta_cliente_fpml = "G:\\Drives compartilhados\\Agregar Negócios - Drive Geral\\Agregar Clientes Ativos\\FPML\\3. Finanças\\3 - Relatórios Financeiros\\BASE DE DADOS - TINY\\CAIXA"
+    pasta_cliente_fpml = "G:\\Drives compartilhados\\Agregar Negócios - Drive Geral\\Agregar Clientes Ativos\\FRAN MAKES\\3. Finanças\\3 - Relatórios Financeiros\\BASE DE DADOS - TINY\\CAIXA"
 
     # Verificar se o arquivo foi baixado
     tempo_espera = 60  # Tempo máximo de espera em segundos
