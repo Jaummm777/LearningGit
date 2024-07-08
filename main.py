@@ -116,7 +116,7 @@ driver = webdriver.Chrome(options=options)
 
 try:
     # Login na primeira conta
-    login_tiny(driver, "agregarnegocios@gmail.com", "Transformar.vidas07")
+    login_tiny(driver, "*************", "**********")
 
     # Expandir menu principal
     driver.find_element(By.XPATH, "//*[@id='main-menu']/div[2]/div[1]/div[1]/div[1]").click() 
@@ -444,12 +444,12 @@ try:
             # Abrir uma nova aba e fazer login na conta secundária
             driver.execute_script("window.open('');")
             driver.switch_to.window(driver.window_handles[1])
-            login_tiny(driver, "LAVRATTIASSESSORIA@GMAIL.COM", "Transformar.vidas07")
+            login_tiny(driver, "***********", "**********")
     except:
         pass
 
     # Login na segunda conta
-    login_tiny(driver, "LAVRATTIASSESSORIA@GMAIL.COM", "Transformar.vidas07")
+    login_tiny(driver, "************", "*****************")
     time.sleep(5)
 
     # Expandir menu principal
