@@ -39,6 +39,6 @@ def logout_tiny(driver):
                 # Abrir uma nova aba e fazer login na conta secundária
                 driver.execute_script("window.open('');")
                 driver.switch_to.window(driver.window_handles[1])
-                login_tiny(driver, "LAVRATTIASSESSORIA@GMAIL.COM", "Transformar.vidas07")
+                login_tiny(driver, "private", "private")
         except:
             pass
