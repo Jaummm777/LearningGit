@@ -32,7 +32,7 @@ def logout_tiny(driver):
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//*[@id='main-menu']/div[2]/div[2]/nav[7]/div[3]/a"))).click()
         time.sleep(5)
     except:
-        # Verificar se a mensagem de sessão expirada aparece
+        # Verificar se a mensagem de sessão expirada aparece.
         try:
             alert_message = driver.find_element(By.XPATH, "//*[contains(text(), 'Atenção! Sua sessão expirou ou este usuário efetuou login em outra máquina.')]")
             if alert_message.is_displayed():
